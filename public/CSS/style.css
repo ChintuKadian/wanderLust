@@ -1,0 +1,158 @@
+body{
+   font-family: "Plus Jakarta Sans", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .container{
+    flex:1; 
+  }
+.navbar {
+    height:5rem;
+    background-color: white;
+}
+
+.fa-compass{
+    color:#fe424d;
+    font-size: 2rem;
+}
+.nav-link{
+    color:#222222 !important;
+
+}
+
+/* footer */
+
+.f-info-links a {
+  text-decoration: none;
+  color: #222222;
+}
+.f-info-links a:hover {
+  text-decoration: underline;
+}
+
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.f-info-socials i {
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.f-info {
+  text-align: center;
+  height: 8rem;
+  display: flex;
+  background-color: #ebebed;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: space-evenly;
+}
+
+
+.f-info {
+  display: flex;
+  height: 8rem;
+  background-color: #ebebee;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: space-evenly;
+  text-align: center;
+}
+
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.f-info-socials i {
+  cursor: pointer;
+  font-size: 2rem;
+  margin-right: 1rem;
+  border-radius: 50% !important;
+  border: #0056b3 !important;
+}
+
+.f-info-socials i:hover {
+  opacity: 1;
+  transition: ease-in-out 0.3s;
+  transform: translateY(0.4rem);
+}
+
+.fa-facebook,
+.fa-pinterest,
+.fa-telegram,
+.fa-square-instagram {
+  background-color: white !important;
+  border: none;
+}
+
+.fa-snapchat {
+  background-color: #f6df0bd2;
+  border-radius: 50%;
+}
+
+.fa-square-instagram {
+  overflow-y: hidden;
+  height: 31px;
+}
+
+/* cards */
+
+.card {
+  border: none !important;
+  margin-bottom: 2rem;
+  position: relative; /* needed for overlay */
+}
+
+.card-img-top {
+  border-radius: 1rem !important;
+  width: 100% !important;
+  height: 20rem;            /* set fixed height */
+  object-fit: cover !important;
+}
+
+.card-body {
+  padding: 0 !important;
+}
+
+.card-text {
+  font-weight: 400 !important;
+}
+
+.listing-link {
+  text-decoration: none;
+}
+
+/* card hover effect */
+.card-img-overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .card-img-overlay {
+  opacity: 0.2;
+  background-color: #ebebed;
+  border-radius: 1rem;
+}
+
+.add-btn{
+  background-color:#fe424d !important;
+  border: none !important;
+}
+
+
+.show-img{
+     height:30vh ;
+}
