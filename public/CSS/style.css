@@ -151,8 +151,37 @@ body{
   background-color:#fe424d !important;
   border: none !important;
 }
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card .btn-outline-danger {
+  float: right;
+}
+
+.container {
+  max-width: 900px;
+}
 
 
 .show-img{
      height:30vh ;
+}
+#starRating i {
+  cursor: pointer;
+  transition: color 0.2s, transform 0.1s;
+}
+
+#starRating i:hover {
+  transform: scale(1.1);
+  color: #f8c146;
 }
