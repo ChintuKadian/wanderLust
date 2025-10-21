@@ -22,3 +22,20 @@ module.exports.validateReview = (req, res, next) => {
     next();
   }
 };
+//for login 
+module.exports.isloggedIn=(req,res,next)=>{
+  if(!req.isAuthenticated()){
+    req.session.redirectUrl=req.originalUrl;
+    req.flash("error","You must be logged in to create new listing");
+    return res.redirect("/login");
+  }
+  next();
+}
+
+//Storing directed Url
+module.exports.saveRedirectUrl=(req,res,next)=>{
+  if(req.session.redirectUrl){
+    res.locals.redirectUrl=req.session.redirectUrl;
+  }
+  next();
+};

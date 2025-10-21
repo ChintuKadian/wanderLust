@@ -24,11 +24,10 @@
                 <!-- Show current image -->
                 <div class="mb-2">
                     <img src="<%= listing.image.url %>" alt="Listing image">
-
                 </div>
 
                 <!-- Input to update image -->
-                <input name="listing[image][url]" value="<%= listing.image.url %>" class="form-control" required>
+                <input name="listing[image][url]" value="<%= listing.image.url %>" class="form-control">
                 <div class="valid-feedback">Valid image link!</div>
                 <div class="invalid-feedback">Please enter a valid image URL.</div>
             </div>
