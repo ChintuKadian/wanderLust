@@ -4,41 +4,49 @@ const Listing = require("../models/listing");
 const Review = require("../models/review");
 const ExpressError = require("../utils/ExpressError");
 const { validateReview } = require("../middleware");
+const {isloggedIn} = require("../middleware");
+const {isNotOwner} = require("../middleware");
+const { isReviewAuthor } = require("../middleware");
+const review = require("../models/review");
+
 
 //  POST Route - Create a New Review
-router.post("/", validateReview, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const listing = await Listing.findById(id);
+router.post(
+  "/",
+  isloggedIn,
+  isNotOwner,
+  validateReview,
+  wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(req.params.id);
+    const review = new Review(req.body.review);
 
-    if (!listing) throw new ExpressError(404, "Listing not found");
+    review.author = req.user._id; // ✅ SET AUTHOR
+    listing.reviews.push(review);
 
-    const newReview = new Review(req.body.review);
-    listing.reviews.push(newReview);
-
-    await newReview.save();
+    await review.save();
     await listing.save();
-    req.flash("success","new review is created");
+
+    req.flash("success", "Review added");
     res.redirect(`/listings/${listing._id}`);
-  } catch (err) {
-    next(err);
-  }
-});
+  })
+);
+
 
 // DELETE Route - Remove a Review
-router.delete("/:reviewId", async (req, res, next) => {
-  try {
+router.delete(
+  "/:reviewId",
+  isloggedIn,
+  isReviewAuthor,
+  wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
 
-    // Remove reference from listing
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    // Delete review itself
     await Review.findByIdAndDelete(reviewId);
-    req.flash("success","review is deleted");
+
+    req.flash("success", "Review deleted");
     res.redirect(`/listings/${id}`);
-  } catch (err) {
-    next(err);
-  }
-});
+  })
+);
+
 
 module.exports = router;

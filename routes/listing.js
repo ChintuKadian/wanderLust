@@ -4,7 +4,7 @@ const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync");
 const { validateListing } = require("../middleware");
 const { isloggedIn }=require("../middleware");  
-
+const { isOwner } = require("../middleware");
 
 // INDEX ROUTE
 router.get("/", wrapAsync(async (req, res) => {
@@ -36,9 +36,17 @@ router.post("/",isloggedIn, validateListing, wrapAsync(async (req, res) => {
   res.redirect(`/listings/${newListing._id}`);
 }));
 
+
 // SHOW ROUTE
 router.get("/:id", wrapAsync(async (req, res) => {
-  const listing = await Listing.findById(req.params.id).populate("reviews").populate("owner");
+  const listing = await Listing.findById(req.params.id)
+  .populate({
+    path: "reviews",
+    populate: {
+      path: "author"
+    }
+  })
+  .populate("owner");
   console.log(listing);
   if (!listing){
     req.flash("error","Listing doesn't exist");
@@ -48,7 +56,7 @@ router.get("/:id", wrapAsync(async (req, res) => {
 }));
 
 // EDIT ROUTE
-router.get("/:id/edit",isloggedIn, wrapAsync(async (req, res) => {
+router.get("/:id/edit",isloggedIn, isOwner, wrapAsync(async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing){
     req.flash("error","Listing doesn't exist");
@@ -58,14 +66,14 @@ router.get("/:id/edit",isloggedIn, wrapAsync(async (req, res) => {
 }));
 
 // UPDATE ROUTE
-router.put("/:id",isloggedIn, validateListing, wrapAsync(async (req, res) => {
+router.put("/:id",isloggedIn, isOwner, validateListing, wrapAsync(async (req, res) => {
   await Listing.findByIdAndUpdate(req.params.id, req.body.listing);
   req.flash("success","listing Updated");
   res.redirect(`/listings/${req.params.id}`);
 }));
 
 // DELETE ROUTE
-router.delete("/:id",isloggedIn, wrapAsync(async (req, res) => {
+router.delete("/:id",isloggedIn,isOwner, wrapAsync(async (req, res) => {
   await Listing.findByIdAndDelete(req.params.id);
   req.flash("success","Listing Deleted");
   res.redirect("/listings");
