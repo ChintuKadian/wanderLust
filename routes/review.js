@@ -1,38 +1,42 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true }); 
+const router = express.Router({ mergeParams: true });
+
 const Listing = require("../models/listing");
 const Review = require("../models/review");
-const ExpressError = require("../utils/ExpressError");
-const { validateReview } = require("../middleware");
-const {isloggedIn} = require("../middleware");
-const {isNotOwner} = require("../middleware");
-const { isReviewAuthor } = require("../middleware");
-const review = require("../models/review");
+const wrapAsync = require("../utils/wrapAsync");
+
+const {
+  isloggedIn,
+  validateReview,
+  isNotOwner,
+  isReviewAuthor
+} = require("../middleware");
 
 
-//  POST Route - Create a New Review
+// CREATE REVIEW — LOGIN REQUIRED
 router.post(
   "/",
-  isloggedIn,
+  isloggedIn,        // 🔐 blocks guests
   isNotOwner,
   validateReview,
   wrapAsync(async (req, res) => {
     const listing = await Listing.findById(req.params.id);
-    const review = new Review(req.body.review);
 
-    review.author = req.user._id; // ✅ SET AUTHOR
+    const review = new Review(req.body.review);
+    review.author = req.user._id;
+
     listing.reviews.push(review);
 
     await review.save();
     await listing.save();
 
-    req.flash("success", "Review added");
+    req.flash("success", "Review added successfully");
     res.redirect(`/listings/${listing._id}`);
   })
 );
 
 
-// DELETE Route - Remove a Review
+// DELETE REVIEW
 router.delete(
   "/:reviewId",
   isloggedIn,
@@ -47,6 +51,5 @@ router.delete(
     res.redirect(`/listings/${id}`);
   })
 );
-
 
 module.exports = router;

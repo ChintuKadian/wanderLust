@@ -37,6 +37,7 @@
 <% } %>
 
   <!-- Review -->
+  <% if (currentUser) { %>
   <div class="card shadow-sm border-0 mt-4 col-md-6 offset-md-3">
   <div class="card-body">
     <h4 class="card-title mb-4 text-center">Leave a Review</h4>
@@ -79,7 +80,11 @@
         <br><br>
       </div>
     </form>
-    <hr>
+<% } else { %>
+  <div class="alert alert-warning text-center">
+    <a href="/login">Login</a> to add a review.
+  </div>
+<% } %>
     
     <!-- all review section  -->
 <hr class="my-4" />
