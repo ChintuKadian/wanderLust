@@ -6,6 +6,10 @@ const { validateListing } = require("../middleware");
 const { isloggedIn }=require("../middleware");  
 const { isOwner } = require("../middleware");
 const listingController = require("../controllers/listings");
+const multer = require("multer");
+const cloudinary = require("../cloudinary");
+const upload = multer({ dest: "uploads/" });
+
 
 
 // INDEX ROUTE
@@ -14,23 +18,44 @@ router.get("/", wrapAsync(listingController.index));
 router.get("/new",isloggedIn, listingController.renderNewForm);
 
 // CREATE ROUTE
-router.post("/",isloggedIn, validateListing, wrapAsync(async (req, res) => {
-  const newListing = new Listing(req.body.listing);
-  if (typeof newListing.image === "string") {
-      newListing.image = {
-          filename: "listingimage",
-          url: newListing.image || "https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHRyYXZlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
-    };
-  }
-  if (!newListing.image.url) {
-  newListing.image.url = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e';
-  }
-  newListing.owner=req.user._id;
-  // console.log(req.body.listing.image.url);
-  await newListing.save();
-  req.flash("success","New Listing created");
-  res.redirect(`/listings/${newListing._id}`);
-}));
+router.post(
+  "/",
+  isloggedIn,
+  upload.single("listing[imageFile]"), // file picker
+  validateListing,
+  wrapAsync(async (req, res) => {
+    const listing = new Listing(req.body.listing);
+
+    // CASE 1: User uploaded a file
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      listing.image = {
+        url: result.secure_url,
+        filename: result.public_id,
+      };
+    }
+    // CASE 2: User provided image URL
+    else if (req.body.listing.image && req.body.listing.image.trim() !== "") {
+      listing.image = {
+        url: req.body.listing.image,
+        filename: "image-url",
+      };
+    }
+    // CASE 3: Default image
+    else {
+      listing.image = {
+        url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+        filename: "default",
+      };
+    }
+
+    listing.owner = req.user._id;
+    await listing.save();
+
+    req.flash("success", "New Listing created");
+    res.redirect(`/listings/${listing._id}`);
+  })
+);
 
 
 // SHOW ROUTE

@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+  console.log("ENV TEST:", process.env.CLOUDINARY_KEY);
+}
 const express =require("express");
 const app=express();
 const mongoose=require("mongoose");
@@ -13,6 +17,8 @@ const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy = require("passport-local");
 const User= require("./models/user.js");
+
+require("./cloudinary");
 
 
 app.use(methodOverride("_method"));
@@ -87,6 +93,10 @@ app.use((err, req, res, next) => {
   if (!err.message) err.message = "Something went wrong!";
   res.status(statusCode).render("error.ejs", { err });
 });
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 
 app.listen(8080,()=>{
