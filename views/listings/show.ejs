@@ -17,6 +17,20 @@
       &#8377;<%= listing.price.toLocaleString("en-IN") %><br>
       <%= listing.location %><br>
       <%= listing.country %>
+      <h5 class="mt-4">Location</h5>
+      <div id="map" data-geometry='<%- JSON.stringify(listing.geometry) %>'></div>
+      <script>
+      const mapDiv = document.getElementById("map");
+    const geometry = JSON.parse(mapDiv.dataset.geometry);
+    const { lat, lng } = geometry;
+    const map = L.map("map").setView([lat, lng], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+    L.marker([lat, lng], { draggable: true }).addTo(map);
+</script>
+
+
     </div>
   </div>
 </div>
@@ -27,13 +41,10 @@
   listing.owner &&
   listing.owner._id.equals(currentUser._id)
 ) { %>
-
   <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">Edit</a>
-
   <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
     <button class="btn btn-danger">Delete</button>
   </form>
-
 <% } %>
 
   <!-- Review -->
@@ -85,7 +96,6 @@
     <a href="/login">Login</a> to add a review.
   </div>
 <% } %>
-    
     <!-- all review section  -->
 <hr class="my-4" />
 
@@ -108,13 +118,11 @@
                   <% } %>
                 <% } %>
               </div>
-
               <!-- Comment -->
               <p class="text-muted mb-1">
                 — <strong><%= review.author ? review.author.username : "Guest" %></strong>
               </p>
               <p class="card-text fs-6"><%= review.comment %></p>
-
               <!-- Delete Button -->
               <% if (currentUser && review.author && review.author._id.equals(currentUser._id)) { %>
                 <form
@@ -130,7 +138,6 @@
             </div>
           </div>
         </div>
-
         <% if ((index + 1) % 2 === 0) { %>
           <!-- Add row spacing after every two cards -->
           <div class="w-100 d-none d-md-block"></div>
@@ -143,23 +150,16 @@
     </div>
   <% } %>
 </div>
-
 <hr class="my-4" />
-
-
 <% 
   let total = 0;
   listing.reviews.forEach(r => total += r.rating);
   let avg = listing.reviews.length ? (total / listing.reviews.length).toFixed(1) : 0;
 %>
-
 <h5 class="text-center mb-3">
   ⭐ Average Rating: <span class="text-warning"><%= avg %></span> / 5
 </h5>
-
-
 <hr class="my-4" />
-
   </div>
 </div>
 <br><br>
