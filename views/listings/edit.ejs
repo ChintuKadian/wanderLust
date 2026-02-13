@@ -49,7 +49,28 @@
         <label class="form-label">Location</label>
         <input name="listing[location]" value="<%= listing.location %>" class="form-control" required>
       </div>
+      <!-- Map Section -->
+<div class="mb-3">
+  <label class="form-label">Adjust Location on Map</label>
 
+  <div class="map-wrapper">
+    <button type="button" class="map-toggle-btn">
+      <i class="fa-solid fa-expand"></i>
+    </button>
+
+    <div id="map"
+         data-geometry='<%- JSON.stringify(listing.geometry) %>'
+         data-edit="true">
+    </div>
+  </div>
+
+  <!-- Hidden inputs to store updated coordinates -->
+  <input type="hidden" name="listing[geometry][lat]" id="latInput">
+  <input type="hidden" name="listing[geometry][lng]" id="lngInput">
+</div>
+
+
+      
       <button class="btn btn-dark add-btn">Update</button>
     </form>
   </div>

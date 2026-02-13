@@ -20,15 +20,29 @@
       <h5 class="mt-4">Location</h5>
       <div id="map" data-geometry='<%- JSON.stringify(listing.geometry) %>'></div>
       <script>
-      const mapDiv = document.getElementById("map");
-    const geometry = JSON.parse(mapDiv.dataset.geometry);
-    const { lat, lng } = geometry;
-    const map = L.map("map").setView([lat, lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
-    L.marker([lat, lng], { draggable: true }).addTo(map);
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof L === "undefined") {
+    console.error("Leaflet not loaded");
+    return;
+  }
+
+  const mapDiv = document.getElementById("map");
+  if (!mapDiv || !mapDiv.dataset.geometry) return;
+
+  const geometry = JSON.parse(mapDiv.dataset.geometry);
+  const { lat, lng } = geometry;
+
+  const map = L.map("map").setView([lat, lng], 13);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+
+  L.marker([lat, lng]).addTo(map);
+
+});
 </script>
+
 
 
     </div>

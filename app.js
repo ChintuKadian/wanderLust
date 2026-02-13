@@ -27,6 +27,7 @@ app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
+app.use(express.json());
 
 const sessionOptions = {
   secret: "Management",
@@ -38,6 +39,7 @@ const sessionOptions = {
     httpOnly: true,
   }
 };
+
 
 main().then(()=>{
     console.log("connect to db");

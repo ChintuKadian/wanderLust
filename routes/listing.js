@@ -32,9 +32,27 @@ router.get("/:id", wrapAsync(listingController.showListing));
 router.get("/:id/edit",isloggedIn, isOwner, wrapAsync(listingController.renderEditForm));
 
 // UPDATE ROUTE
-router.put("/:id",isloggedIn, isOwner, validateListing, wrapAsync(listingController.updateListing));
+router.put(
+  "/:id",
+  isloggedIn,
+  isOwner,
+  upload.single("listing[imageFile]"), 
+  validateListing,
+  wrapAsync(listingController.updateListing)
+);
 
 // DELETE ROUTE
 router.delete("/:id",isloggedIn,isOwner, wrapAsync(listingController.deleteListing));
+
+
+router.patch("/:id/geometry", async (req, res) => {
+  const { lat, lng } = req.body;
+
+  await Listing.findByIdAndUpdate(req.params.id, {
+    geometry: { lat, lng }
+  });
+
+  res.json({ success: true });
+});
 
 module.exports = router;

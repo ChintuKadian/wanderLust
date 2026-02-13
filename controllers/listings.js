@@ -6,9 +6,14 @@ const cloudinary = require("../cloudinary");
 
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
-  res.render("index.ejs", { allListings });
-  
+
+  res.render("index.ejs", {
+    allListings,
+    listingsJSON: JSON.stringify(allListings)
+  });
 };
+
+
 module.exports.createListing = async (req, res) => {
     const listing = new Listing(req.body.listing);
     
@@ -44,6 +49,9 @@ module.exports.createListing = async (req, res) => {
   if (coords) {
     listing.geometry = coords; // { lat, lng }
   }
+
+console.log("GEOCODE RESULT:", coords);
+
     listing.owner = req.user._id;
     await listing.save();
 
@@ -87,6 +95,10 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateListing = async (req, res) => {
   const listing = await Listing.findById(req.params.id);
+    if (!req.body.listing) {
+      req.flash("error", "Invalid form submission");
+      return res.redirect("back");
+    }
 
   // 🔹 update text fields
   listing.title = req.body.listing.title;
@@ -116,6 +128,13 @@ module.exports.updateListing = async (req, res) => {
   if (coords) {
     listing.geometry = coords;
   }
+  
+  if (req.body.listing.geometry) {
+  listing.geometry = {
+    lat: req.body.listing.geometry.lat,
+    lng: req.body.listing.geometry.lng
+  };
+}
 
   await listing.save();
 
